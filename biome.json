@@ -13,7 +13,12 @@
     "formatWithErrors": false,
     "indentStyle": "space",
     "lineEnding": "lf",
-    "lineWidth": 120
+    "lineWidth": 120,
+
+    "ignore": [],
+    "attributePosition": "auto",
+
+    "indentWidth": 2
   },
   "linter": {
     "enabled": true,
