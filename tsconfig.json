@@ -1,16 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "commonjs",
-    "outDir": "./dist",
-    "strict": true,
-    "noImplicitAny": true,
-    "strictPropertyInitialization": true,
-    "baseUrl": "./",
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "target": "ESNext", // Target the latest ECMAScript features
+    "module": "commonjs", // Use CommonJS module resolution (typical for Node.js)
+    "outDir": "./dist", // Output directory for compiled files
+    "strict": true, // Enable all strict type-checking options
+    "noImplicitAny": true, // Raise error on expressions and declarations with an implied 'any' type
+    "strictPropertyInitialization": true, // Ensure class properties are initialized in the constructor
+    "baseUrl": "./", // Base URL for module resolution
+    "esModuleInterop": true, // Enables emit interoperability between CommonJS and ES Modules
+    "experimentalDecorators": true, // Enables experimental support for decorators
+    "emitDecoratorMetadata": true, // Enables the generation of metadata for decorators
+    "resolveJsonModule": true // Allow importing JSON files as modules
   },
-  "include": ["./src/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"] // Exclude the node_modules directory
 }
