@@ -28,5 +28,8 @@
   },
   "lint-staged": {
     "*": ["biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true"]
+  },
+  "dependencies": {
+    "@prisma/client": "^5.20.0"
   }
 }
