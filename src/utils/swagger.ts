@@ -2,6 +2,8 @@
 import express, { type Request, type Response } from 'express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import swaggerDocument from '../../swagger.json';
+
 import { version } from '../../package.json';
 
 import log from './logger';
@@ -28,15 +30,14 @@ const options: swaggerJsdoc.Options = {
       },
     ],
   },
-  apis: ['.src/routes/index.ts', './src/schema/*.ts'], // Ensure these paths are correct
+  apis: ['./src/routes/index.ts', './src/schema/*.ts'], // Ensure these paths are correct
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
 function swaggerDocs(router: express.Router) {
-  // Swagger page
-  router.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
+  router.use('/api-docs', swaggerUi.serve);
+  router.get('/api-docs', swaggerUi.setup(swaggerDocument));
   // Docs in JSON format
   router.get('/docs.json', (_req: Request, res: Response) => {
     res.setHeader('Content-Type', 'application/json');

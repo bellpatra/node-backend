@@ -2,7 +2,7 @@
 
 require('dotenv').config();
 import config from 'config';
-import express, { type Request, type Response } from 'express';
+import express from 'express';
 
 import { PrismaClient } from '@prisma/client';
 
@@ -23,11 +23,6 @@ app.use(express.json({ limit: '10kb' }));
 
 // Route Prefixes
 app.use('/', indexRouter);
-
-// Global error handler
-app.use((error: Error, _req: Request, res: Response) => {
-  res.status(500).json({ status: 'error', message: error.message });
-});
 
 // Start server and connect to database
 const startServer = async () => {

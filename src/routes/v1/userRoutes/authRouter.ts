@@ -4,7 +4,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /login:
+ * /v1/auth/login:
  *   get:
  *     summary: Login endpoint
  *     description: Returns a login message.
