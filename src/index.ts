@@ -1,46 +1,39 @@
-// app.ts
+import type { Server } from 'node:http';
+import app from './app';
+import prisma from './client';
+import config from './config/config';
+import logger from './config/logger';
 
-require('dotenv').config();
-import config from 'config';
-import express from 'express';
+let server: Server;
+prisma.$connect().then(() => {
+  logger.info('Connected to SQL Database');
+  server = app.listen(config.port, () => {
+    logger.info(`Listening to port ${config.port}`);
+  });
+});
 
-import { PrismaClient } from '@prisma/client';
-
-import indexRouter from './routes/index';
-
-// Validate environment variables
-
-// Initialize Prisma Client
-const prisma = new PrismaClient();
-
-const app = express();
-
-// Logger
-
-// Middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json({ limit: '10kb' }));
-
-// Route Prefixes
-app.use('/', indexRouter);
-
-// Start server and connect to database
-const startServer = async () => {
-  try {
-    const port = config.get<number>('port');
-    await prisma.$connect(); // Connect to the database
-    console.log('Connected to the database');
-
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+const exitHandler = () => {
+  if (server) {
+    server.close(() => {
+      logger.info('Server closed');
+      process.exit(1);
     });
-  } catch (error) {
-    console.error('Error connecting to the database:', error);
+  } else {
     process.exit(1);
   }
 };
 
-// Start the application
-startServer();
+const unexpectedErrorHandler = (error: unknown) => {
+  logger.error(error);
+  exitHandler();
+};
 
-export { prisma }; // Export prisma client for use in other modules
+process.on('uncaughtException', unexpectedErrorHandler);
+process.on('unhandledRejection', unexpectedErrorHandler);
+
+process.on('SIGTERM', () => {
+  logger.info('SIGTERM received');
+  if (server) {
+    server.close();
+  }
+});

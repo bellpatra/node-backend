@@ -1,4 +1,5 @@
-import express, { type Request, type Response } from 'express';
+import express from 'express';
+import { loginUserHandler } from '../../../controllers/users/authController';
 
 const router = express.Router();
 
@@ -12,10 +13,8 @@ const router = express.Router();
  *       200:
  *         description: Successful response with a login message.
  */
-
-router.get('/login', (_req: Request, res: Response) => {
-  res.send('login ');
-});
+// Login user
+router.post('/login', loginUserHandler);
 
 // You can add more routes here, for example:
 // router.post("/login", (req: Request, res: Response) => {
