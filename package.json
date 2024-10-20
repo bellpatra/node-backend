@@ -28,7 +28,6 @@
     "@types/express": "^5.0.0",
     "@types/helmet": "^0.0.48",
     "@types/http-status": "^0.2.30",
-    "@types/joi": "^17.2.2",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/lodash": "^4.17.9",
     "@types/morgan": "^1.9.9",

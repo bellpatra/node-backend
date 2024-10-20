@@ -1,47 +1,52 @@
 import path from 'node:path';
 import dotenv from 'dotenv';
-import Joi from 'joi';
+import { z } from 'zod';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
-const envVarsSchema = Joi.object()
-  .keys({
+const envVarsSchema = z
+  .object({
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
+    NODE_ENV: z.enum(['production', 'development', 'test']),
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    PORT: Joi.number().default(3000),
+    PORT: z.coerce.number().default(3000).optional(),
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    JWT_SECRET: Joi.string().required().description('JWT secret key'),
+    JWT_SECRET: z.string().nonempty().describe('JWT secret key'),
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().default(30).description('minutes after which access tokens expire'),
+    JWT_ACCESS_EXPIRATION_MINUTES: z.coerce.number().default(30).describe('minutes after which access tokens expire'),
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    JWT_REFRESH_EXPIRATION_DAYS: Joi.number().default(30).description('days after which refresh tokens expire'),
+    JWT_REFRESH_EXPIRATION_DAYS: z.coerce.number().default(30).describe('days after which refresh tokens expire'),
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    JWT_RESET_PASSWORD_EXPIRATION_MINUTES: Joi.number()
+    JWT_RESET_PASSWORD_EXPIRATION_MINUTES: z.coerce
+      .number()
       .default(10)
-      .description('minutes after which reset password token expires'),
+      .describe('minutes after which reset password token expires'),
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: Joi.number()
+    JWT_VERIFY_EMAIL_EXPIRATION_MINUTES: z.coerce
+      .number()
       .default(10)
-      .description('minutes after which verify email token expires'),
+      .describe('minutes after which verify email token expires'),
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    SMTP_HOST: Joi.string().description('server that will send the emails'),
+    SMTP_HOST: z.string().optional().describe('server that will send the emails'),
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    SMTP_PORT: Joi.number().description('port to connect to the email server'),
+    SMTP_PORT: z.coerce.number().optional().describe('port to connect to the email server'),
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    SMTP_USERNAME: Joi.string().description('username for email server'),
+    SMTP_USERNAME: z.string().optional().describe('username for email server'),
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    SMTP_PASSWORD: Joi.string().description('password for email server'),
+    SMTP_PASSWORD: z.string().optional().describe('password for email server'),
     // biome-ignore lint/style/useNamingConvention: <explanation>
-    EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),
+    EMAIL_FROM: z.string().optional().describe('the from field in the emails sent by the app'),
   })
-  .unknown();
+  .strict()
+  .passthrough(); // Allow additional keys
 
-const { value: envVars, error } = envVarsSchema.prefs({ errors: { label: 'key' } }).validate(process.env);
+const result = envVarsSchema.safeParse(process.env);
 
-if (error) {
-  throw new Error(`Config validation error: ${error.message}`);
+if (!result.success) {
+  throw new Error(`Config validation error: ${result.error.issues.map((issue) => issue.message).join(', ')}`);
 }
+
+const envVars = result.data;
 
 export default {
   env: envVars.NODE_ENV,
