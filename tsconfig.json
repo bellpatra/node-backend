@@ -12,6 +12,6 @@
     "emitDecoratorMetadata": true, // Enables the generation of metadata for decorators
     "resolveJsonModule": true // Allow importing JSON files as modules
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*"], // Adjust this path as needed,
   "exclude": ["node_modules"] // Exclude the node_modules directory
 }

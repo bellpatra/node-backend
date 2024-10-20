@@ -48,7 +48,7 @@
     "swagger-autogen": "^2.23.7",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.3"
   },
   "lint-staged": {
     "*": ["biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true"]

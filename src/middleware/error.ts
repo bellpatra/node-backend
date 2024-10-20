@@ -24,11 +24,14 @@ export const errorConverter: ErrorRequestHandler = (err, _req, _res, next) => {
 };
 
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
-  // Ensure err is of type ApiError or has expected properties
   const { statusCode = httpStatus.INTERNAL_SERVER_ERROR, message: initialMessage } = err as ApiError;
 
   const statusMessages: Record<number, string> = {
     [httpStatus.INTERNAL_SERVER_ERROR]: 'Internal Server Error',
+    [httpStatus.BAD_REQUEST]: 'Bad Request',
+    [httpStatus.UNAUTHORIZED]: 'Unauthorized',
+    [httpStatus.FORBIDDEN]: 'Forbidden',
+    [httpStatus.NOT_FOUND]: 'Not Found',
     // Add other status codes and messages as needed
   };
 
@@ -47,9 +50,12 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
     ...(config.env === 'development' && { stack: err.stack }),
   };
 
-  // Log the error in development
+  // Log the error
   if (config.env === 'development') {
     logger.error(err);
+  } else {
+    // Log operational errors minimally or in a different way, if needed
+    logger.warn(`Operational error: ${message}`);
   }
 
   res.status(statusCode).send(response);
