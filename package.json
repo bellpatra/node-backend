@@ -20,6 +20,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.3",
     "@types/bcrypt": "^5.0.2",
+    "@types/bcryptjs": "^2.4.6",
     "@types/compression": "^1.7.5",
     "@types/config": "^3.3.5",
     "@types/cors": "^2.8.17",
@@ -55,6 +56,7 @@
   "dependencies": {
     "@prisma/client": "^5.20.0",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "config": "^3.3.12",
     "cors": "^2.8.5",
@@ -64,7 +66,9 @@
     "http-status": "^1.8.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
+    "moment": "^2.30.1",
     "morgan": "^1.10.0",
+    "nodemailer": "^6.9.15",
     "pino": "^9.4.0",
     "pino-pretty": "^11.2.2",
     "prom-client": "^15.1.3",
