@@ -3,33 +3,24 @@ import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import httpStatus from 'http-status';
+import passport from 'passport';
 import config from './config/config';
 import morgan from './config/morgan';
+import { jwtStrategy } from './config/passport';
 import { errorConverter, errorHandler } from './middleware/error';
+import { authLimiter } from './middleware/rateLimiter';
 import xss from './middleware/xss';
 import indexRouter from './routes/index';
 import ApiError from './utils/ApiError';
 
 const app = express();
 
-// Logging middleware for non-test environments
-if (config.env !== 'test') {
-  app.use(morgan.successHandler);
-  app.use(morgan.errorHandler);
-}
-
 // Security middleware
 app.use(helmet());
 
-// Middleware to parse JSON request bodies
+// Middleware to parse JSON and URL-encoded request bodies
 app.use(express.json());
-
-// Middleware to parse URL-encoded request bodies
 app.use(express.urlencoded({ extended: true }));
-app.use('/', indexRouter);
-
-// Sanitize request data to prevent XSS attacks
-app.use(xss());
 
 // Gzip compression for responses
 app.use(compression());
@@ -38,8 +29,28 @@ app.use(compression());
 app.use(cors());
 app.options('*', cors()); // Pre-flight request handling
 
-// Default route for the homepage
+// Logging middleware for non-test environments
+if (config.env !== 'test') {
+  app.use(morgan.successHandler);
+  app.use(morgan.errorHandler);
+}
 
+// JWT authentication
+app.use(passport.initialize());
+passport.use('jwt', jwtStrategy);
+
+// Limit repeated failed requests to auth endpoints in production
+if (config.env === 'production') {
+  app.use('/v1/auth', authLimiter);
+}
+
+// Sanitize request data to prevent XSS attacks
+app.use(xss());
+
+// Main application routes
+app.use('/', indexRouter);
+
+// Handle 404 Not Found
 app.use((_req, _res, next) => {
   next(
     new ApiError(

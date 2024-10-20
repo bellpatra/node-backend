@@ -13,6 +13,9 @@ const jwtVerify: VerifyCallback = async (payload, done) => {
     if (payload.type !== TokenType.ACCESS) {
       throw new Error('Invalid token type');
     }
+    if (!prisma) {
+      throw new Error('Prisma client is not initialized');
+    }
     const user = await prisma.user.findUnique({
       select: {
         id: true,
