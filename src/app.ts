@@ -26,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Gzip compression for responses
 app.use(compression());
+//* ths is for testing
 
 // Enable CORS
 app.use(cors());
